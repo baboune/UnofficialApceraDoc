@@ -41,7 +41,7 @@ There are two sections that are confusing and error prone in the online document
 * Provision the Orchestrator machine host
 * Provision all other cluster machine hosts
 
-The steps are described below in a different manner.
+Similar steps are described below in a different manner.
 
 
 ## Pre-requisites
@@ -160,7 +160,7 @@ For remote log in via SSH, you should update the scripts with your public SSH ke
 using ssh-copy-id in destination folder /etc/ssh/userauth/ops and /etc/ssh/userauth/root so copy from rochestrator to singleton, central and IM
 
 
-One option 
+One option is ....
 
 
 ### Craft the cluster.conf
@@ -169,10 +169,18 @@ Craft the cluster.conf.
 
 Working example of cluster.conf [config/bareos-cluster-mine.conf]
 
+In order to allow remote SSH
 
 ### 
 
-###########3
+# Tips and tricks
+
+## Clean up after a failed deployment
+
+Do a `orchestrator-cli teardown`, and then on each of the BareOS hosts run `rm /etc/chef/*` to reset their chef configuration completely.
+
+
+# Automated setup
 
 1. Setup
 
@@ -194,6 +202,7 @@ And with minimum viable size as per https://docs.apcera.com/installation/deploy/
 
 
 After running the provision_orchestrator.sh script, it will not be possible to login via ssh tp the orchestrator host. SSH is limited to key authentication.  
+
 To allow orchestrator to login vis ssh, one needs to physically log onto the host, then:
 - Generate an SSH key pair (if you do not already have one).
 - Create a file under /etc/ssh/userauth/, 
@@ -201,18 +210,6 @@ To allow orchestrator to login vis ssh, one needs to physically log onto the hos
 - Open file /etc/ssh/userauth/orchestrator for editing
 - Copy and paste your public key at the end of the file (the entire string starting with ssh-rsa)
 - Save the file
-
-
----------------
-https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation
-
-4 servers, install ubuntu
-1 the IM has a 20GB partition
-
-Then run provision_base.sh script on all.
-Then run provision_orchestrator.sh script on all.
-
-Craft the cluster.conf.
 
 
 
@@ -233,13 +230,6 @@ Authentication:
     "password": "PASSWORD"
   }
 ]
-
-
-
-
-DNS:
-- Define a wildcard for the base domain.
-- 
 
 
 In the cluster.conf:
@@ -270,24 +260,17 @@ Add flag to release bundle:
 orchestrator-cli deploy -c cluster.conf --release-bundle ....tar.gz
 
       
-Lync:
-http://docs.apcera.com/installation/bareos/bareos-install-config/
-https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation
-https://docs.apcera.com/installation/bareos/bareos-install-config/
-https://docs.apcera.com/installation/deploy/orchestrator/#copy-clusterconf
-https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation
-http://docs.apcera.com/installation/bareos/bareos-install-reqs/
+# Links
+* http://docs.apcera.com/installation/bareos/bareos-install-config/
+* https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation
+* https://docs.apcera.com/installation/bareos/bareos-install-config/
+* https://docs.apcera.com/installation/deploy/orchestrator/#copy-clusterconf
+* https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation
+* http://docs.apcera.com/installation/bareos/bareos-install-reqs/
 
 SSH:
 also, in http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts, it says: "The scripts change the sshd_config to only allows the ops, orchestrator, and root users to SSH in. You can change that to allow other users if you desire." but the scripts as downloaded from https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation  contains: "AllowUsers ops root"- So orchestrator can not login via ssh. Bug? Or documentation pb?
 add: 
     AllowUsers ops orchestrator root
 
-
-
-
- chef sets the hostname to clustername-uuid, where the uuid is the one seen in the orchestrator ssh menu.  This makes it
- possible to correlate logs back to their hosts after extracting them to another system for analysis.  The same chef recipe
- adds the local hostname to /etc/hosts on each host to allow local name resolution.  There is no interaction with dns, none
- should be required.  Nothing outside the host is aware of the hostname. All cluster services are configured by IP.
     
