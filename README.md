@@ -2,11 +2,13 @@
 
 
 Minimum viable install for BareOS:
-4 servers, install ubuntu
-1 the IM has a 20GB partition
+- 4 servers  <br>
+- install ubuntu 14.04 (minimal or server) <br>
+- 1 of the 4 servers is the IM and must have a primary partition with 20GB space <br>
 
 Then run provision_base.sh script on all.
-Then run provision_orchestrator.sh script on all.
+
+Then run provision_orchestrator.sh script on orchestrator server only.
 
 Craft the cluster.conf.
 
