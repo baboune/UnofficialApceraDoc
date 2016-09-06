@@ -1,14 +1,62 @@
 # UnofficialApceraDoc
 
+Instructions for setting up a BareOS Enterprise Edition of Apcera.
+
+## Base cluster
 
 Minimum viable install for BareOS:
-- 4 servers  <br>
-- install ubuntu 14.04 (minimal or server) <br>
-- 1 of the 4 servers is the IM and must have a primary partition with 20GB space <br>
+- 4 servers: orchestrator, singleton, central and one instance manager (IM).<br>
+- base OS: ubuntu 14.04 (minimal or server).<br>
+- the IM (1 of the 4 servers) must have a primary partition with 20GB space.<br>
 
-Then run provision_base.sh script on all.
+And with minimum viable size as per https://docs.apcera.com/installation/deploy/sizing/#minimum-viable-deployment-mvd.
+Nb    | type         | RAM  | Disk   | Installed components
+----- | ------------ | ---- | ------ | ------
+1 | orchestrator     | 2GB |  8GB  |     orchestrator-server, orchestrator-database
+1 | central          | 4GB |  20GB |     router, api-server, flex-auth-server, nats-server, <br>job-manager, health-manager, cluster-monitor, <br> metrics-manager, auditlog-database, component-database, events-server
+1 | singleton        | 4GB |  20GB  |  auth-server, package-manager (local), redis-server, <br>graphite-server, statsd-server, stagehand
+1 | instance-manager | 8GB |  100GB |  instance-manager
 
-Then run provision_orchestrator.sh script on orchestrator server only.
+It is important to remember that the Apcera setup will change the hostnames of the initial servers.
+
+
+## General recommendations
+
+### Forget using Vagrant
+
+The chef deployment will bind to the eth0 interface (ie first interface) in the list.  Since Vagrant sets up an additional interface (NAT) on the first interface, the orchestrator will fail to deploy on the other apcera hosts.
+It gets worse based on https://docs.apcera.com/installation/bareos/bareos-install-reqs/: "Network interface requirements
+Currently you must use eth0 as the name for the network interface on the Ubuntu host."
+
+### External DNS
+While the documentation refers to using a DNS, the DNS is not used during the setup.
+
+The orchestrator-cli (using chef) sets the hostname to clustername-uuid, where the uuid is the one seen in the orchestrator ssh menu.  This makes it possible to correlate logs back to their hosts after extracting them to another system for analysis. The same chef recipe adds the local hostname to /etc/hosts on each host to allow local name resolution.  There is no interaction with dns, none should be required.  Nothing outside the host is aware of the hostname. All cluster services are configured by IP.
+
+After the initial setup of Apcera, it is only necessary for two DNS records to be created: {DOMAIN} and *.{DOMAIN}. These should be registered with DNS and pointing to the IP addresses of the HTTP routers, or the load balancer that fronts the routers.
+
+
+## Steps after install ubuntu
+
+### Run scripts
+Once Ubuntu is setup on each server. There are two scripts to run: 
+```
+- provision_base.sh
+- provision_orchestrator.sh
+```
+
+The script "provision_base.sh" must be ran on all servers except the orchestrator.
+
+The script "provision_orchestrator.sh" must be ran on the orchestrator server only.
+
+Note: Running those scripts require all the servers to have internet access.
+
+At this point, the servers are almost "ready" to deploy apcera.
+
+
+### Setup ssh access
+
+### Craft the cluster.conf
 
 Craft the cluster.conf.
 
@@ -17,9 +65,6 @@ Working example of cluster.conf [config/bareos-cluster-mine.conf]
 ###########3
 
 1. Setup
-Forget using Vagrant, the chef deployment will bind to the eth0 interface (ie first interface) in the list.  Since Vagrant sets up an additional interface (NAT) on the first interface, the orchestrator will fail to deploy on the other apcera hosts.
-It gets worse: https://docs.apcera.com/installation/bareos/bareos-install-reqs/, "Network interface requirements
-Currently you must use eth0 as the name for the network interface on the Ubuntu host."
 
 a. The Vagrant file will only setup the DNS node to use as a nameserver (192.168.50.100).
 b. Manually spin up 3 VMs, Ubuntu 14 server or minimal. 
