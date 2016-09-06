@@ -52,7 +52,7 @@ Review the [provisioning script](http://docs.apcera.com/installation/bareos/bare
 
 To run a script, copy it to a machine host and run it using sudo privileges. See instructions below.
 
-Each script requires internet access. Each machine needs a hostname and DNS. If necessary, add nameserver <IP-address> to file resolve.conf. For air gapped installations, you will need to run your own apt-mirror.
+Each script requires internet access as well as access to a valid DNS to resolve external hostnames like "apcera.com". Air gapped installations require running your own apt-mirror. This is not described here.
 
 ## Steps after install ubuntu
 
