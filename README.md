@@ -10,6 +10,7 @@ Minimum viable install for BareOS:
 - the IM (1 of the 4 servers) must have a primary partition with 20GB space.<br>
 
 And with minimum viable size as per https://docs.apcera.com/installation/deploy/sizing/#minimum-viable-deployment-mvd.
+
 Nb    | type         | RAM  | Disk   | Installed components
 ----- | ------------ | ---- | ------ | ------
 1 | orchestrator     | 2GB |  8GB  |     orchestrator-server, orchestrator-database
