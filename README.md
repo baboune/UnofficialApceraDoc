@@ -54,17 +54,20 @@ Note: Running those scripts require all the servers to have internet access.
 
 At this point, the servers are almost "ready" to deploy apcera.
 
-Things to consider:
-* The scripts contain an ssh pub key that gets deployed on all machines.  That key is for Apcera ops.  Since, as an installer, we do not have a matching primary key, that key can not be used to do remote ssh to the servers.
+### Things to consider
+
+The scripts contain ssh public keys that get deployed on all machines.  That key is for Apcera ops.  Since, as an installer, we do not have a matching primary key, that key can not be used to do remote ssh to the servers.
 
 Searching through the scripts with "ssh-rsa", one finds:
 
 1. around line 165, provision_base.sh:
 ```
+(
 cat <<'EOP'
 cert-authority ssh-rsa AAAAB...N apcera-user-ca
 ssh-rsa AAAAB3N...4n/D apcera-special-ops
 EOP
+)> /etc/ssh/userauth/root
 ```
 
 2. Around line 207, provision_base.sh:
@@ -76,6 +79,7 @@ cat <<'EOP'
 cert-authority ssh-rsa AAA...5N apcera-user-ca
 ssh-rsa AAA...4n/D apcera-special-ops
 EOP
+)> /etc/ssh/userauth/root
 ```
 
 3. around line 165, provision_orchestrator:
