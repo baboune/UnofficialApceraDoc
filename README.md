@@ -54,8 +54,65 @@ Note: Running those scripts require all the servers to have internet access.
 
 At this point, the servers are almost "ready" to deploy apcera.
 
+Things to consider:
+* The scripts contain an ssh pub key that gets deployed on all machines.  That key is for Apcera ops.  Since, as an installer, we do not have a matching primary key, that key can not be used to do remote ssh to the servers.
+
+Searching through the scripts with "ssh-rsa", one finds:
+
+1. around line 165, provision_base.sh:
+```
+cat <<'EOP'
+cert-authority ssh-rsa AAAAB...N apcera-user-ca
+ssh-rsa AAAAB3N...4n/D apcera-special-ops
+EOP
+```
+
+2. Around line 207, provision_base.sh:
+```
+ Write the SSH keys for the ops user. This includes the master Apcera ops key,
+# as well as the user certificate authority key.
+(
+cat <<'EOP'
+cert-authority ssh-rsa AAA...5N apcera-user-ca
+ssh-rsa AAA...4n/D apcera-special-ops
+EOP
+```
+
+3. around line 165, provision_orchestrator:
+```
+(
+cat <<'EOP'
+cert-authority ssh-rsa AAA...5N apcera-user-ca
+ssh-rsa AAA...4n/D apcera-special-ops
+EOP
+) > /etc/ssh/userauth/root
+```
+
+2. Around line 207, provision_orchestrator.sh:
+```
+ Write the SSH keys for the ops user. This includes the master Apcera ops key,
+# as well as the user certificate authority key.
+(
+cat <<'EOP'
+cert-authority ssh-rsa AAA...5N apcera-user-ca
+ssh-rsa AAA...4n/D apcera-special-ops
+EOP
+) > /etc/ssh/userauth/root
+```
+
+It is unclear at this step which ones should a user modify, it is most likely a bug as the shell scripts basically do the same thing twice.
+(??)
 
 ### Setup ssh access
+
+During the "provision_x.sh" phase, the scripts will modify how one accesses ssh.
+
+One such modification in sshd_config is this:
+```
+AuthorizedKeysFile /etc/ssh/userauth/%u
+```
+
+
 
 ### Craft the cluster.conf
 
