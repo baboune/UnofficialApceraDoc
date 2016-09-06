@@ -179,6 +179,15 @@ In order to allow remote SSH
 
 Do a `orchestrator-cli teardown`, and then on each of the BareOS hosts run `rm /etc/chef/*` to reset their chef configuration completely.
 
+## Orchestrator logs 
+
+On the different hosts being setup, the logs are in /var/log/orchestrator-agent/.
+
+The file to look at is "current":
+```
+$  tail -f /var/log/orchestrator-agent/current
+```
+
 
 # Automated setup
 
