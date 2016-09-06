@@ -33,7 +33,16 @@ While the documentation refers to using a DNS, the DNS is not used during the se
 
 The orchestrator-cli (using chef) sets the hostname to clustername-uuid, where the uuid is the one seen in the orchestrator ssh menu.  This makes it possible to correlate logs back to their hosts after extracting them to another system for analysis. The same chef recipe adds the local hostname to /etc/hosts on each host to allow local name resolution.  There is no interaction with dns, none should be required.  Nothing outside the host is aware of the hostname. All cluster services are configured by IP.
 
-After the initial setup of Apcera, it is only necessary for two DNS records to be created: {DOMAIN} and *.{DOMAIN}. These should be registered with DNS and pointing to the IP addresses of the HTTP routers, or the load balancer that fronts the routers.
+After the initial setup of Apcera, it is only necessary for two DNS records to be created: {DOMAIN} and *.{DOMAIN}. the cluster FQDN/wildcard entries, i.e. *.your.cluster.name, pointing to the routers or whatever load balancer you have in front of them.
+
+### Problems with http://docs.apcera.com/installation/bareos/bareos-install-scripts/
+
+There are two sections that are confusing and error prone in the online documentation.  I suggest not to spend too much time on those:
+* Provision the Orchestrator machine host
+* Provision all other cluster machine hosts
+
+The steps are described below in a different manner.
+
 
 ## Pre-requisites
 
@@ -48,7 +57,7 @@ Each script requires internet access. Each machine needs a hostname and DNS. If 
 ## Steps after install ubuntu
 
 ### Run scripts
-Once Ubuntu is setup on each server. There are two scripts to run: 
+Once Ubuntu is setup on each server. There are two scripts to run as root (or sudo): 
 ```
 - provision_base.sh
 - provision_orchestrator.sh
@@ -66,13 +75,17 @@ The script "provision_base.sh" must be ran on all servers except the orchestrato
 
 The script "provision_orchestrator.sh" must be ran on the orchestrator server only.
 
-Note: Running those scripts require all the servers to have internet access.
+Note: 
+* Running those scripts require all servers to have internet access.
+
 
 At this point, the servers are almost "ready" to deploy apcera.
 
 ### Things to consider
 
-The scripts contain ssh public keys that get deployed on all machines.  Those keys are for Apcera ops.  Since, as an installer, we do not have a matching private key, it can not be used to SSH into the servers.
+The scripts contain two ssh public keys (apcera-user-ca, apcera-special-ops) that get deployed on all machines.  Those keys are for Apcera ops only.  The private keys are owned by Apcera.
+
+Since, as an installer, we do not have a matching private key, it can not be used to SSH into the servers.
 
 Searching through the scripts with "ssh-rsa", one finds:
 
@@ -125,7 +138,7 @@ It is unclear at this step which ones should a user modify, it is most likely a 
 
 ### Setup ssh access
 
-During the "provision_x.sh" phase, the scripts will modify how one accesses ssh.
+During the "provision_x.sh" phase, the scripts will modify how one accesses ssh.  Basically, the scripts change the sshd_config to only allows some users to SSH in, and they change how the identity check is performed.
 
 One such modification in sshd_config is this:
 ```
@@ -140,8 +153,14 @@ chmod 600 /etc/ssh/userauth/lmcnise
 
 Where lmcnise_key.pub is the "lmcnise" public key generated via ssh-keygen on linux.
 
+For remote log in via SSH, you should update the scripts with your public SSH key for each user (root, ops, orchestrator).There are different options at this point to enable remote SSH and have knowledge of the key:
+1.  Add a key in the provision_x.sh scripts in the proper location.
+2.  Before launching the provision script create on orchestartor node one or two key and coy them on singleton, instance-manager and central
+[‎2016-‎09-‎06 15:10] Andrea Severini: 
+using ssh-copy-id in destination folder /etc/ssh/userauth/ops and /etc/ssh/userauth/root so copy from rochestrator to singleton, central and IM
 
 
+One option 
 
 
 ### Craft the cluster.conf
@@ -149,6 +168,9 @@ Where lmcnise_key.pub is the "lmcnise" public key generated via ssh-keygen on li
 Craft the cluster.conf.
 
 Working example of cluster.conf [config/bareos-cluster-mine.conf]
+
+
+### 
 
 ###########3
 
