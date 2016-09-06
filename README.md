@@ -282,4 +282,23 @@ also, in http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisi
 add: 
     AllowUsers ops orchestrator root
 
-    
+
+I just noticed an issue in your cluster.conf... . You have a single basic-auth user "admin", but that user isn't listed in the admins section, so it won't have any access.
+
+Nicolas Seyvet [5:31 PM]  
+ah. It is straight from the link  https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation. Just made it work.  Ok so "admins" section.
+
+[5:32]  
+like this: "admins": [
+       "username@apcera.me"
+       "admin"
+     ],
+
+[5:32]  
+or?
+
+David Nolan [5:33 PM]  
+`admin@apcera.me`
+
+[5:33]  
+the `@apcera.me` distinguishes the "basic auth" usernames from names that come from other auth providers.
