@@ -20,7 +20,6 @@ Nb    | type         | RAM  | Disk   | Installed components
 
 It is important to remember that the Apcera setup will change the hostnames of the initial servers.
 
-
 ## General recommendations
 
 ### Forget using Vagrant
@@ -36,6 +35,15 @@ The orchestrator-cli (using chef) sets the hostname to clustername-uuid, where t
 
 After the initial setup of Apcera, it is only necessary for two DNS records to be created: {DOMAIN} and *.{DOMAIN}. These should be registered with DNS and pointing to the IP addresses of the HTTP routers, or the load balancer that fronts the routers.
 
+## Pre-requisites
+
+Install [Ubuntu Server 14.04](http://docs.apcera.com/installation/bareos/bareos-install-ubuntu/) on each machine host.
+
+Review the [provisioning script](http://docs.apcera.com/installation/bareos/bareos-install-ubuntu/docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts) requirements.
+
+To run a script, copy it to a machine host and run it using sudo privileges. See instructions below.
+
+Each script requires internet access. Each machine needs a hostname and DNS. If necessary, add nameserver <IP-address> to file resolve.conf. For air gapped installations, you will need to run your own apt-mirror.
 
 ## Steps after install ubuntu
 
@@ -45,6 +53,14 @@ Once Ubuntu is setup on each server. There are two scripts to run:
 - provision_base.sh
 - provision_orchestrator.sh
 ```
+
+These scripts update the kernel, create required users, add repositories, set up OS level security, run Chef recipes, and install necessary agents for each cluster host. 
+
+They also change the sshd_config to only allows the following users to SSH in:
+* On orchestrator node: ops, orchestrator, and root users. 
+* On othe nodes: ops, and root users. 
+
+The provisioning scripts are available to Apcera Platform Enterprise Edition licensed customers via the Apcera Customer Support Portal. Sign into the [Support Portal](http://support.apcera.com/) with your account credentials to download the scripts. To run the scripts, see provisioning cluster hosts.
 
 The script "provision_base.sh" must be ran on all servers except the orchestrator.
 
@@ -56,7 +72,7 @@ At this point, the servers are almost "ready" to deploy apcera.
 
 ### Things to consider
 
-The scripts contain ssh public keys that get deployed on all machines.  That key is for Apcera ops.  Since, as an installer, we do not have a matching primary key, that key can not be used to do remote ssh to the servers.
+The scripts contain ssh public keys that get deployed on all machines.  Those keys are for Apcera ops.  Since, as an installer, we do not have a matching private key, it can not be used to SSH into the servers.
 
 Searching through the scripts with "ssh-rsa", one finds:
 
@@ -115,6 +131,16 @@ One such modification in sshd_config is this:
 ```
 AuthorizedKeysFile /etc/ssh/userauth/%u
 ```
+
+As such, if one wants to allow for another user to log on the machine, then place the public keys in the matching location. E.g for user "lmcnise":
+```
+cat lmcnise_key.pub > /etc/ssh/userauth/lmcnise
+chmod 600 /etc/ssh/userauth/lmcnise
+```
+
+Where lmcnise_key.pub is the "lmcnise" public key generated via ssh-keygen on linux.
+
+
 
 
 
