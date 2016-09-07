@@ -23,7 +23,9 @@ It is important to remember that the Apcera setup will change the hostnames of t
 
 Each Instance Manager (IM) machine host must have its disk partitioned so that the IM has a dedicated volume on which to run container (job) instances. The majority of the disk should be allocated to the IM. During the cluster.conf crafting step, you must provide a physical disk partition so that the IM can use LVM to create necessary logical partitions. See http://docs.apcera.com/installation/bareos/bareos-install-reqs/#partition-requirements.
 
-In short, create a primary partition sufficient for the OS (say 20 GB) ("/dev/sda1"), and another partition that is not formatted for the job instances.  For example, on a single disk machine using /dev/sda, it can look like this:
+In short, create a primary partition sufficient for the OS (say 20 GB) ("/dev/sda1"), and another partition that is not formatted for the job instances.  
+
+For example, on a single disk machine using /dev/sda, it can look like this:
 ```
 Disk /dev/sda: 64.4 GB, 64424509440 bytes
 255 heads, 63 sectors/track, 7832 cylinders, total 125829120 sectors
@@ -37,13 +39,15 @@ Disk identifier: 0x0006d8c7
 /dev/sda2        39063552   125829119    43382784   83  Linux
 ```
 
-Note: If you follow the Apcera documentation, during the ubuntu setup a single partition is created (e.g. /dev/sda1).  As such, after the install, one must login to the IM, and add a partition.  Using the above example with a single disk:
+Note: If you follow the Apcera documentation, during the ubuntu setup a single partition is created (e.g. /dev/sda1).  As such, after the install, one must login to the IM, and manually add a partition.  
+
+Using the above example with a single disk:
 ```
 $ fdisk /dev/sda
 ```
 Then "n" to create a new partition, "p" for primary, "2" for number, accept defaults for start and end, then "w" to write changes to disk.
 
-Note that partition information as it will be required in the cluster.conf.
+That partition information is required to craft the cluster.conf file.
 
 
 ## General recommendations
@@ -191,11 +195,15 @@ One option is ....
 
 ### Craft the cluster.conf
 
-Craft the cluster.conf.
+The cluster.conf file uses an Apcera proprietary format called "dconf".  The format is defined here: [http://docs.apcera.com/reference/dconf/]. 
 
 Working example of cluster.conf: [config/bareos-cluster-mine.conf](config/bareos-cluster-mine.conf).
 
+#### Allowing remote SSH
+
 In order to allow remote SSH, it is possible to add a public key information to the cluster.conf.
+
+TBD.
 
 #### Adding partition device for the instance managers (IMs)
 
