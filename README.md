@@ -89,7 +89,7 @@ AFAIK, air gapped installations are not supported atm.
 ### Run scripts
 Once Ubuntu is setup on each server. There are two scripts to run as root (or sudo): 
 * provision_base.sh: Apply to all servers except "orchestrator" type.
-* provision_orchestrator.sh: : Apply to "orchestrator" type only.
+* provision_orchestrator.sh: Apply to "orchestrator" type only.
 
 These scripts update the kernel, create required users, add repositories, set up OS level security, run Chef recipes, and install necessary agents for each cluster server. 
 
