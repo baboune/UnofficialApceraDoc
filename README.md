@@ -88,7 +88,7 @@ AFAIK, air gapped installations are not supported atm.
 
 ### Run scripts
 Once Ubuntu is setup on each server. There are two scripts to run as root (or sudo): 
-* provision_base.sh: Applly to all servers except "orchestrator" type.
+* provision_base.sh: Apply to all servers except "orchestrator" type.
 * provision_orchestrator.sh: : Apply to "orchestrator" type only.
 
 These scripts update the kernel, create required users, add repositories, set up OS level security, run Chef recipes, and install necessary agents for each cluster server. 
@@ -170,7 +170,7 @@ It is unclear at this step which ones should a user modify, it is most likely a 
 
 In http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts, it says: "The scripts change the sshd_config to only allows the ops, orchestrator, and root users to SSH in. You can change that to allow other users if you desire." 
 
-The statenent from the doc is partially false:
+The statement from the doc is partially false:
 * The provision_base.sh script will limit access to "ops" and "root".
 * The provision_orchestrator.sh script will limit access to "ops", "orchestrator" and "root".
 
