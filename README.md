@@ -198,6 +198,7 @@ Only the cluster.conf entry is mandatory to ensure remote SSH access.  Once a "o
 
 It is unclear at this time which user is used by "orchestrator-cli". So, the easiest approach is most likely to add the public key part (mykey.pub) to both sections i.e. for both the "root" and "ops" sections in the "provision_xx.sh" scripts.  
 
+Correction: Jeremy Strout said it is the "ops" user that is required by "orchestrator-cli".
 
 Optional: Adding the key to a provision_xx.sh script, e.g. add mykey.pub for "ops":
 ```
