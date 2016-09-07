@@ -106,65 +106,9 @@ The script "provision_orchestrator.sh" must be ran on the orchestrator server on
 Note: 
 * Running those scripts require all servers to have internet access.
 
-
 At this point, the servers are almost "ready" to deploy apcera.
 
 ### Things to consider
-
-#### Apcera key management
-
-The scripts contain two ssh public keys (apcera-user-ca, apcera-special-ops) that get deployed on all machines.  Those keys are for Apcera ops only.  The private keys are owned by Apcera.
-
-Since, as an installer, we do not have a matching private key, it can not be used to SSH into the servers.
-
-Searching through the scripts with "ssh-rsa", one finds:
-
-1. around line 165, provision_base.sh:
-```
-(
-cat <<'EOP'
-cert-authority ssh-rsa AAAAB...N apcera-user-ca
-ssh-rsa AAAAB3N...4n/D apcera-special-ops
-EOP
-)> /etc/ssh/userauth/root
-```
-
-2. Around line 207, provision_base.sh:
-```
- Write the SSH keys for the ops user. This includes the master Apcera ops key,
-# as well as the user certificate authority key.
-(
-cat <<'EOP'
-cert-authority ssh-rsa AAA...5N apcera-user-ca
-ssh-rsa AAA...4n/D apcera-special-ops
-EOP
-)> /etc/ssh/userauth/root
-```
-
-3. around line 165, provision_orchestrator:
-```
-(
-cat <<'EOP'
-cert-authority ssh-rsa AAA...5N apcera-user-ca
-ssh-rsa AAA...4n/D apcera-special-ops
-EOP
-) > /etc/ssh/userauth/root
-```
-
-2. Around line 207, provision_orchestrator.sh:
-```
- Write the SSH keys for the ops user. This includes the master Apcera ops key,
-# as well as the user certificate authority key.
-(
-cat <<'EOP'
-cert-authority ssh-rsa AAA...5N apcera-user-ca
-ssh-rsa AAA...4n/D apcera-special-ops
-EOP
-) > /etc/ssh/userauth/root
-```
-
-It is unclear at this step which ones should a user modify, it is most likely a bug as the shell scripts basically do the same thing twice.
-(??)
 
 #### Restricted access to "ops", "root"
 
@@ -186,49 +130,128 @@ And restart ssh for changes to sshd_config to take effect:
 ```
 $ service restart ssh
 ```
+#### Apcera key management
 
-### Setup ssh access
+The scripts contain two ssh public keys (apcera-user-ca, apcera-special-ops) that get deployed on all machines.  Those keys are for Apcera operations people only.  The private keys are owned by Apcera and not distributed.
 
-During the "provision_x.sh" phase, the scripts will modify how one accesses ssh.  Basically, the scripts change the sshd_config to only allows some users to SSH in, and they change how the identity check is performed.
+Since, as an apcera installer, we do not have a matching private key, it can not be used to SSH into the servers.
 
-One such modification in sshd_config is this:
+Searching through the scripts with "ssh-rsa", one finds two locations per script for public SSH keys.
+
+#### provision_base.sh
+
+1. Around line 165, setup "root" user:
 ```
-AuthorizedKeysFile /etc/ssh/userauth/%u
+# Write the SSH keys for the root user. This includes the master Apcera root key,
+# as well as the user certificate authority key.
+(
+cat <<'EOP'
+cert-authority ssh-rsa AAAAB...N apcera-user-ca
+ssh-rsa AAAAB3N...4n/D apcera-special-ops
+EOP
+)> /etc/ssh/userauth/root
 ```
 
-As such, if one wants to allow for another user to log on the machine, then place the public keys in the matching location. E.g for user "lmcnise":
+2. Around line 207, setup "ops" user:
 ```
-cat lmcnise_key.pub > /etc/ssh/userauth/lmcnise
-chmod 600 /etc/ssh/userauth/lmcnise
+# Write the SSH keys for the ops user. This includes the master Apcera ops key,
+# as well as the user certificate authority key.
+(
+cat <<'EOP'
+cert-authority ssh-rsa AAA...5N apcera-user-ca
+ssh-rsa AAA...4n/D apcera-special-ops
+EOP
+) > /etc/ssh/userauth/ops
 ```
 
-Where lmcnise_key.pub is the "lmcnise" public key generated via ssh-keygen on linux.
+#### provision_orchestrator.sh
 
-For remote log in via SSH, you should update the scripts with your public SSH key for each user (root, ops, orchestrator).There are different options at this point to enable remote SSH and have knowledge of the key:
-1.  Add a key in the provision_x.sh scripts in the proper location.
-2.  Before launching the provision script create on orchestartor node one or two key and coy them on singleton, instance-manager and central
-[‎2016-‎09-‎06 15:10] Andrea Severini: 
-using ssh-copy-id in destination folder /etc/ssh/userauth/ops and /etc/ssh/userauth/root so copy from rochestrator to singleton, central and IM
+1. Around line 165, setup "root" user:
+```
+# Write the SSH keys for the root user. This includes the master Apcera root key,
+# as well as the user certificate authority key.
+(
+cat <<'EOP'
+cert-authority ssh-rsa AAA...5N apcera-user-ca
+ssh-rsa AAA...4n/D apcera-special-ops
+EOP
+) > /etc/ssh/userauth/root
+```
+
+2. Around line 207, setup "ops" user:
+```
+# Write the SSH keys for the ops user. This includes the master Apcera ops key,
+# as well as the user certificate authority key.
+(
+cat <<'EOP'
+cert-authority ssh-rsa AAA...5N apcera-user-ca
+ssh-rsa AAA...4n/D apcera-special-ops
+EOP
+) > /etc/ssh/userauth/ops
+```
+
+#### Adding one's SSH key
+
+Let's assume that you have generated an SSH key. That key has a private and a public part: mykey.pub and mykey.pem.
+
+Only the cluster.conf entry is manadatory to ensure remote SSH access.  Once a "orchestrator deploy" occurs chef will be  managing the key list.  As such, adding keys in the "provision_xx.sh" scripts is just to ensure that you retain access to the host prior to the deploy, in case something goes wrong.
+
+It is unclear at this time which user is used by "orchestrator-cli". So, the easiest approach is most likely to add the public key part (mykey.pub) to both sections i.e. for both the "root" and "ops" sections in the "provision_xx.sh" scripts.  
 
 
-One option is ....
+Optional: Adding the key to a provision_xx.sh script, e.g. add mykey.pub for "ops":
+```
+(
+cat <<'EOP'
+cert-authority ssh-rsa AAA...5N apcera-user-ca
+ssh-rsa AAA...4n/D apcera-special-ops
+ssh-rsa AAV...45n/D mykey
+EOP
+) > /etc/ssh/userauth/ops
+```
+(Copy and paste content of mykey.pub.)
+
+This will guarantee that the key is distributed to all servers in the cluster for both "root" and "ops".
+
+Mandatory: Add SSH key to "cluster.conf" file.
+```
+chef: {
+  "continuum": {
+    
+    [...]
+
+    "ssh": {
+      "custom_keys":[
+       "ssh-rsa AAAAB3Nz...W6S6tDCH orchestrator@bare04",
+       # The below is the mykey.pub to allow mykey.pem to be loaded in ssh-agent and orchestrator-cli to work
+       "ssh-rsa AAAAB...22O/CN1Lxz"
+      ]
+    },
+```
+
+Now, there is another interesting aspect of the "orchestrator-cli" in that it requires the matching private key to be within the user session context (ssh-agent). In other words, if one does not add his own key to the cluster.conf/provision_xx.sh files, then one can not use commands like:
+```
+$ orchestrator-cli collect
+$ orchestrator-cli ssh
+```
+They will fail by requesting a password.
+
+The reason is that above "orchestrator-cli" commands wont work without a primary key in the ssh-agent, and since the apcera-special-ops and apcera-user-ca are not available to us, then one MUST include a public key in the cluster.conf/provision_x.sh with a known private key.
 
 
 ### Craft the cluster.conf
 
 The cluster.conf file uses an Apcera proprietary format called "dconf".  The format is defined here: [http://docs.apcera.com/reference/dconf/]. 
 
+In the section above, I describe how to add the public key (mykey.pub) to the cluster.conf file. This is necessary to allow remote SSH within the cluster nodes from the orchestrator.
+
+There is a lot of information about cluster.conf [here]](http://docs.apcera.com/installation/config/cluster-conf/)
+
 Working example of cluster.conf: [config/bareos-cluster-mine.conf](config/bareos-cluster-mine.conf).
-
-#### Allowing remote SSH
-
-In order to allow remote SSH, it is possible to add a public key information to the cluster.conf.
-
-TBD.
 
 #### Adding partition device for the instance managers (IMs)
 
-As part of the cluster.conf, one must specify a partition to allocate for the running jobs.  The partition information is required in the following section:
+As part of the cluster.conf, one must specify a partition to allocate for the running apcera jobs (containers, capsules, etc.).  The partition information is required, and can be found in the following section:
 
 ```
 chef: {
@@ -241,7 +264,7 @@ chef: {
     }
 ```
 
-The "device" value must match the name of the partition that will be allocated for the jobs.
+The "device" value must match the name of the created partition that is allocated for the apcera jobs.  In my case, it is "/dev/sda2"
 
 #### Making sure the admin can log in the Apcera console (apc)
 
@@ -292,6 +315,39 @@ The file to look at is "current":
 $  tail -f /var/log/orchestrator-agent/current
 ```
 
+## orchestrator-cli asks for password
+
+In order for the orchestrator-cli to work properly on commands that require a remote SSH to servers, a valid private key must be loaded within the shell/session context.
+
+This is done by the following set of actions:
+```
+# 1. start ssh-agent
+$ eval $(ssh-agent)
+Agent pid 9473
+# 2. check there is no key
+$ ssh-add -l
+The agent has no identities.
+# 3. add the key
+$ ssh-add simple.pem 
+Identity added: simple.pem (simple.pem)
+```
+
+## Adding a new user, and its SSH key
+
+During the "provision_x.sh" phase, the scripts will modify how one accesses ssh.  Basically, the scripts change the sshd_config to only allows some users to SSH in, and they change how the identity check is performed.
+
+One such modification in sshd_config is this:
+```
+AuthorizedKeysFile /etc/ssh/userauth/%u
+```
+
+As such, if one wants to allow for another user to log on the machine, then place the public keys in the matching location. E.g for user "lmcnise":
+```
+cat lmcnise_key.pub > /etc/ssh/userauth/lmcnise
+chmod 600 /etc/ssh/userauth/lmcnise
+```
+
+Where lmcnise_key.pub is the "lmcnise" public key generated via ssh-keygen on linux.
 
 # Automated setup
 
