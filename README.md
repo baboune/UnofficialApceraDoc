@@ -20,6 +20,32 @@ Nb    | type         | RAM  | Disk   | Installed components
 
 It is important to remember that the Apcera setup will change the hostnames of the initial servers.
 
+
+Each Instance Manager (IM) machine host must have its disk partitioned so that the IM has a dedicated volume on which to run container (job) instances. The majority of the disk should be allocated to the IM. During the cluster.conf crafting step, you must provide a physical disk partition so that the IM can use LVM to create necessary logical partitions. See http://docs.apcera.com/installation/bareos/bareos-install-reqs/#partition-requirements.
+
+In short, create a primary partition sufficient for the OS (say 20 GB) ("/dev/sda1"), and another partition that is not formatted for the job instances.  For example, on a single disk machine using /dev/sda, it can look like this:
+```
+Disk /dev/sda: 64.4 GB, 64424509440 bytes
+255 heads, 63 sectors/track, 7832 cylinders, total 125829120 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x0006d8c7
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        2048    39063551    19530752   83  Linux
+/dev/sda2        39063552   125829119    43382784   83  Linux
+```
+
+Note: If you follow the Apcera documentation, during the ubuntu setup a single partition is created (e.g. /dev/sda1).  As such, after the install, one must login to the IM, and add a partition.  Using the above example with a single disk:
+```
+$ fdisk /dev/sda
+```
+Then "n" to create a new partition, "p" for primary, "2" for number, accept defaults for start and end, then "w" to write changes to disk.
+
+Note that partition information as it will be required in the cluster.conf.
+
+
 ## General recommendations
 
 ### Forget using Vagrant
@@ -167,11 +193,60 @@ One option is ....
 
 Craft the cluster.conf.
 
-Working example of cluster.conf [config/bareos-cluster-mine.conf]
+Working example of cluster.conf: [config/bareos-cluster-mine.conf](config/bareos-cluster-mine.conf).
 
-In order to allow remote SSH
+In order to allow remote SSH, it is possible to add a public key information to the cluster.conf.
 
-### 
+#### Adding partition device for the instance managers (IMs)
+
+As part of the cluster.conf, one must specify a partition to allocate for the running jobs.  The partition information is required in the following section:
+
+```
+chef: {
+
+ [...]
+
+ "mounts": {
+    "instance-manager": {
+      "device": "/dev/sda2"
+    }
+```
+
+The "device" value must match the name of the partition that will be allocated for the jobs.
+
+#### Making sure the admin can log in the Apcera console (apc)
+
+If using a single basic-auth user "admin", that user must also be listed in the "admins" section, otherwise it won't have any access.
+
+The initial cluster.conf looked like this:
+```
+ "admins": [
+       "username@apcera.me"
+     ],
+```
+Since my admin user in [config/bareos-cluster-mine.conf](config/bareos-cluster-mine.conf) is defined as:
+```
+"auth_server": {
+  "identity": {
+    "basic": {
+      "enabled": true,
+      "users": [
+        {
+          "name": "admin",
+          "password": "ericsson"
+        }
+      ]
+    },
+  },
+```
+Which means use basic-auth, and user name is "admin".  Then the "admins" section must be:
+```
+ "admins": [
+       "admin@apcera.me"
+     ],
+```
+
+Note: The `@apcera.me` distinguishes the "basic auth" usernames from names that come from other auth providers.
 
 # Tips and tricks
 
