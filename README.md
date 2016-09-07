@@ -80,20 +80,18 @@ Install [Ubuntu Server 14.04](http://docs.apcera.com/installation/bareos/bareos-
 
 Review the [provisioning script](http://docs.apcera.com/installation/bareos/bareos-install-ubuntu/docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts) requirements.
 
-To run a script, copy it to a machine host and run it using sudo privileges. See instructions below.
-
 Each script requires internet access as well as access to a valid DNS to resolve external hostnames like "apcera.com". Air gapped installations require running your own apt-mirror. This is not described here.
 
-## Steps after install ubuntu
+AFAIK, air gapped installations are not supported atm.
+
+## Steps after installing ubuntu
 
 ### Run scripts
 Once Ubuntu is setup on each server. There are two scripts to run as root (or sudo): 
-```
-- provision_base.sh
-- provision_orchestrator.sh
-```
+* provision_base.sh: Applly to all servers except "orchestrator" type.
+* provision_orchestrator.sh: : Apply to "orchestrator" type only.
 
-These scripts update the kernel, create required users, add repositories, set up OS level security, run Chef recipes, and install necessary agents for each cluster host. 
+These scripts update the kernel, create required users, add repositories, set up OS level security, run Chef recipes, and install necessary agents for each cluster server. 
 
 They also change the sshd_config to only allows the following users to SSH in:
 * On orchestrator node: ops, orchestrator, and root users. 
@@ -112,6 +110,8 @@ Note:
 At this point, the servers are almost "ready" to deploy apcera.
 
 ### Things to consider
+
+#### Apcera key management
 
 The scripts contain two ssh public keys (apcera-user-ca, apcera-special-ops) that get deployed on all machines.  Those keys are for Apcera ops only.  The private keys are owned by Apcera.
 
@@ -165,6 +165,27 @@ EOP
 
 It is unclear at this step which ones should a user modify, it is most likely a bug as the shell scripts basically do the same thing twice.
 (??)
+
+#### Restricted access to "ops", "root"
+
+In http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts, it says: "The scripts change the sshd_config to only allows the ops, orchestrator, and root users to SSH in. You can change that to allow other users if you desire." 
+
+The statenent from the doc is partially false:
+* The provision_base.sh script will limit access to "ops" and "root".
+* The provision_orchestrator.sh script will limit access to "ops", "orchestrator" and "root".
+
+If other users should be allowed access, then either modify the provision_xx.sh script or the sshd_config file:
+
+```
+  ...
+  AllowUsers ops orchestrator root myuser
+  ...
+```
+
+And restart ssh for changes to sshd_config to take effect: 
+```
+$ service restart ssh
+```
 
 ### Setup ssh access
 
@@ -341,11 +362,6 @@ In the cluster.conf:
 
 Replace with own public key to enable ssh.
 
-Verify the partition before the cluster.conf is used for provisioning, chek secrtion: 
-"instance-manager": {
-        "device": "/dev/sda4"
-      }
-
 https://downloads.apcera.com/continuum/bundles/release-2.2.0.tar.gz
 
 Add flag to release bundle:
@@ -359,29 +375,3 @@ orchestrator-cli deploy -c cluster.conf --release-bundle ....tar.gz
 * https://docs.apcera.com/installation/deploy/orchestrator/#copy-clusterconf
 * https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation
 * http://docs.apcera.com/installation/bareos/bareos-install-reqs/
-
-SSH:
-also, in http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts, it says: "The scripts change the sshd_config to only allows the ops, orchestrator, and root users to SSH in. You can change that to allow other users if you desire." but the scripts as downloaded from https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation  contains: "AllowUsers ops root"- So orchestrator can not login via ssh. Bug? Or documentation pb?
-add: 
-    AllowUsers ops orchestrator root
-
-
-I just noticed an issue in your cluster.conf... . You have a single basic-auth user "admin", but that user isn't listed in the admins section, so it won't have any access.
-
-Nicolas Seyvet [5:31 PM]  
-ah. It is straight from the link  https://support.apcera.com/hc/en-us/articles/209596146-Bare-OS-Installation. Just made it work.  Ok so "admins" section.
-
-[5:32]  
-like this: "admins": [
-       "username@apcera.me"
-       "admin"
-     ],
-
-[5:32]  
-or?
-
-David Nolan [5:33 PM]  
-`admin@apcera.me`
-
-[5:33]  
-the `@apcera.me` distinguishes the "basic auth" usernames from names that come from other auth providers.
