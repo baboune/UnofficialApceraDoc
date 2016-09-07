@@ -194,7 +194,7 @@ EOP
 
 Let's assume that you have generated an SSH key. That key has a private and a public part: mykey.pub and mykey.pem.
 
-Only the cluster.conf entry is manadatory to ensure remote SSH access.  Once a "orchestrator deploy" occurs chef will be  managing the key list.  As such, adding keys in the "provision_xx.sh" scripts is just to ensure that you retain access to the host prior to the deploy, in case something goes wrong.
+Only the cluster.conf entry is mandatory to ensure remote SSH access.  Once a "orchestrator deploy" occurs Chef will be  managing the key list.  As such, adding keys in the "provision_xx.sh" scripts is just to ensure that you retain access to the host prior to the deploy, in case something goes wrong.
 
 It is unclear at this time which user is used by "orchestrator-cli". So, the easiest approach is most likely to add the public key part (mykey.pub) to both sections i.e. for both the "root" and "ops" sections in the "provision_xx.sh" scripts.  
 
@@ -211,7 +211,7 @@ EOP
 ```
 (Copy and paste content of mykey.pub.)
 
-This will guarantee that the key is distributed to all servers in the cluster for both "root" and "ops".
+This will guarantee that the key is distributed to all servers in the cluster for both "root" and "ops" during bootstraping.
 
 Mandatory: Add SSH key to "cluster.conf" file.
 ```
@@ -228,6 +228,7 @@ chef: {
       ]
     },
 ```
+This guarantees the SSH key is managed by Chef.
 
 Now, there is another interesting aspect of the "orchestrator-cli" in that it requires the matching private key to be within the user session context (ssh-agent). In other words, if one does not add his own key to the cluster.conf/provision_xx.sh files, then one can not use commands like:
 ```
