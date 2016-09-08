@@ -2,6 +2,8 @@
 
 Instructions for setting up a BareOS Enterprise Edition of Apcera.
 
+These instructions/comments are collected while experimenting with such a 4 servers BareOS setup.
+
 ## Base cluster
 
 Minimum viable install for BareOS:
@@ -68,10 +70,10 @@ After the initial setup of Apcera, it is only necessary for two DNS records to b
 ### Problems with http://docs.apcera.com/installation/bareos/bareos-install-scripts/
 
 There are two sections that are confusing and error prone in the online documentation.  I suggest not to spend too much time on those:
-* Provision the Orchestrator machine host
-* Provision all other cluster machine hosts
+* [Provision the Orchestrator machine host](http://docs.apcera.com/installation/bareos/bareos-install-scripts/#provision-the-orchestrator-machine-host)
+* [Provision all other cluster machine hosts](http://docs.apcera.com/installation/bareos/bareos-install-scripts/#provision-all-other-cluster-machine-hosts)
 
-Similar steps are described below in a different manner.
+Similar steps are described below using a different approach.
 
 
 ## Pre-requisites
