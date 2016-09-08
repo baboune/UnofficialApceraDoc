@@ -1,0 +1,266 @@
+[
+	{
+		"Name": "apache-2.2.29.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/apache-2.2.29.cntmp",
+		"Hash": "50244b2c6938925adba83032be19ffa9270fe4257fde0bc696eb35d0e136b9b3",
+		"Size": 5894575
+	},
+	{
+		"Name": "apache-2.4.18.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/apache-2.4.18.cntmp",
+		"Hash": "48dcd575be10a5cff9b717f5119de47e19f006af6748e61809d3a29003dc5256",
+		"Size": 10145763
+	},
+	{
+		"Name": "apache-ant-1.9.4.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/apache-ant-1.9.4.cntmp",
+		"Hash": "90da7e80919221ed26728d6cc00aa3b71f46b6e0362235e4f35f908c07485404",
+		"Size": 5529575
+	},
+	{
+		"Name": "apache-tomcat-8.0.33.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/apache-tomcat-8.0.33.cntmp",
+		"Hash": "1a4afdd8290618b3b202e2f02358dafd6e21456e264fa412eddd34587234d003",
+		"Size": 9255286
+	},
+	{
+		"Name": "bzr-2.6.0.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/bzr-2.6.0.cntmp",
+		"Hash": "08edc7b93b3b967a33f540179ae6ebc4bc60b1cf731395bf56371149fb709594",
+		"Size": 25214845
+	},
+	{
+		"Name": "clisp-2.49.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/clisp-2.49.cntmp",
+		"Hash": "c33ab6c86acdba7b32a06b5f6c7bd68ca0ba4e1b64a39b98fcc0471dd3046cae",
+		"Size": 8810527
+	},
+	{
+		"Name": "erlang-otp-18.3.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/erlang-otp-18.3.cntmp",
+		"Hash": "ca9d8d26e970f8b57a2c54bc9168ce933cd79b4f300175119ce92c4b12dd1340",
+		"Size": 58828346
+	},
+	{
+		"Name": "erlang-otp1701.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/erlang-otp1701.cntmp",
+		"Hash": "132b89b216f3ac824f7dffb09990715773afa2946f827433aa4d275c8c1f465f",
+		"Size": 57202861
+	},
+	{
+		"Name": "git-2.8.0.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/git-2.8.0.cntmp",
+		"Hash": "9844092a576ecfd90ed9a720b275e7b023721e27066709c6671b9fdbb21db155",
+		"Size": 31835427
+	},
+	{
+		"Name": "gnatsd-0.7.2.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/gnatsd-0.7.2.cntmp",
+		"Hash": "bdb522c0c35dfb1f23933f20dba23e5a43cdb9b3cdd9955c074844fd2e7617f5",
+		"Size": 2775473
+	},
+	{
+		"Name": "go-1.5.4.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/go-1.5.4.cntmp",
+		"Hash": "f9d7f26fc24d9b77ae9a7a6ecdeebbac05df10393adc7ea6b646835efb287253",
+		"Size": 97335425
+	},
+	{
+		"Name": "go-1.6.2.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/go-1.6.2.cntmp",
+		"Hash": "75ca87a2203e68bd5a92625409ee3e046097e2679d23532b57b11c8fa3f72ae9",
+		"Size": 88638763
+	},
+	{
+		"Name": "imagemagick-6.8.9-6-apc2.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/imagemagick-6.8.9-6-apc2.cntmp",
+		"Hash": "f3d05b24a48049c81590fa5680f2d563633642ff589fae4b819db4bb66e6a198",
+		"Size": 28333558
+	},
+	{
+		"Name": "iperf-2.0.5.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/iperf-2.0.5.cntmp",
+		"Hash": "810c49d284e79fbac643762fca4ca7982724d61e343009dc4f2f6c63297fb334",
+		"Size": 39210
+	},
+	{
+		"Name": "maven-3.2.2.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/maven-3.2.2.cntmp",
+		"Hash": "13c38f283543fe9518661f0c5ead16d58f0716d9696be8681bc38c842c54da4f",
+		"Size": 7010307
+	},
+	{
+		"Name": "memcached-1.4.20.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/memcached-1.4.20.cntmp",
+		"Hash": "b736898f95d1620ae42bcf61d52757fd2e6f5014d3e1666c06f18ea18d736f70",
+		"Size": 184273
+	},
+	{
+		"Name": "mercurial-3.0.2.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/mercurial-3.0.2.cntmp",
+		"Hash": "ef9d57b3b073651428b8600c1c252aa856444296267112a1035dd7482dbe25b6",
+		"Size": 4234630
+	},
+	{
+		"Name": "mysql-5.6.31.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/mysql-5.6.31.cntmp",
+		"Hash": "0b8caafa050d636b0d2c416ca30034ca4f515f97246d9aaa01e80978eb3b602e",
+		"Size": 201527086
+	},
+	{
+		"Name": "mysql-client-5.6.31.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/mysql-client-5.6.31.cntmp",
+		"Hash": "5eace8298452aaef04eee4e22d35c37eeaf1b74ed43d36c7a0d513f81ade387c",
+		"Size": 289522058
+	},
+	{
+		"Name": "newrelic-java-3.20.0.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/newrelic-java-3.20.0.cntmp",
+		"Hash": "348c81ae4362c2064477ebbfb12a0cb27a15ffa6045cc35ea52d8d05808013eb",
+		"Size": 7762949
+	},
+	{
+		"Name": "nginx-1.11.1.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/nginx-1.11.1.cntmp",
+		"Hash": "28416b4ba4ad76deceecd1ce443b3e999351f67bb4116e1b2d880cc6153e0fbf",
+		"Size": 2737519
+	},
+	{
+		"Name": "node-4.4.6.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/node-4.4.6.cntmp",
+		"Hash": "f81acc1baf2081cab44f828f3a231ae9ea9b938dff2e043473e0b6752a997850",
+		"Size": 13581016
+	},
+	{
+		"Name": "node-6.2.1.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/node-6.2.1.cntmp",
+		"Hash": "98ea48be9429125d2b5117ac03f124a219cfde651848bce986341c09c928cc0a",
+		"Size": 14448628
+	},
+	{
+		"Name": "openjdk-1.7.0-u101-b00.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/openjdk-1.7.0-u101-b00.cntmp",
+		"Hash": "23aeb01a3a44c88690f4be29c6ddcf34e225d65272c81eb5f72aa8a78fb701ef",
+		"Size": 184677558
+	},
+	{
+		"Name": "openjdk-1.8.0-u60-b23.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/openjdk-1.8.0-u60-b23.cntmp",
+		"Hash": "f707ff18e3265ccc1a117bd10385ffae2aaa12da1630f2b324c270d9cd523130",
+		"Size": 215681694
+	},
+	{
+		"Name": "perl-5.20.0.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/perl-5.20.0.cntmp",
+		"Hash": "2feba956bac21f3821bb51dbb7a708b23db10a5db6beff49e3e75f2a7df3951e",
+		"Size": 12482437
+	},
+	{
+		"Name": "perl-5.22.1.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/perl-5.22.1.cntmp",
+		"Hash": "88f8f2c058f0427aa006f413ec43f6c4dabe834da581689943d8e7becf232b85",
+		"Size": 12708239
+	},
+	{
+		"Name": "php-5.6.19.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/php-5.6.19.cntmp",
+		"Hash": "25ba4160a1528163b7f46f8de25101896ad15c1eef976d74dcc05c5e60723ed9",
+		"Size": 45905360
+	},
+	{
+		"Name": "php-apache-5.6.16-apc1.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/php-apache-5.6.16-apc1.cntmp",
+		"Hash": "d3ddce0cb0a31d972041fe590745466fbf7f1acf0e93429e02aa8e5ff82ec0c3",
+		"Size": 46046023
+	},
+	{
+		"Name": "php-fpm-nginx-5.6.16-apc1.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/php-fpm-nginx-5.6.16-apc1.cntmp",
+		"Hash": "f48e33de415ecf7d06da4252ec6f91787bd7dab49460f4ae6b201a863ace8322",
+		"Size": 46528237
+	},
+	{
+		"Name": "postgres-9.4.8.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/postgres-9.4.8.cntmp",
+		"Hash": "fd9c4f8ff8191d66a9dc6ea9cc9600e395749e60ca82c8fb4623bc220ff85b6e",
+		"Size": 10625276
+	},
+	{
+		"Name": "python-2.7.11.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/python-2.7.11.cntmp",
+		"Hash": "7461bea61f61136de7ab28a905ca743859a1564ca7c7669be915b0c5234140ec",
+		"Size": 32403427
+	},
+	{
+		"Name": "python-3.5.1.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/python-3.5.1.cntmp",
+		"Hash": "54be075c94c27a1367a9374b5c38fa06096829dacf45f777212449a87b3666b9",
+		"Size": 47792950
+	},
+	{
+		"Name": "rabbitmq-3.5.5-apc2.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/rabbitmq-3.5.5-apc2.cntmp",
+		"Hash": "668782aee30d368c5aa023dd4cfd2670ff4019fd78f68a4ef80609c22aebb373",
+		"Size": 4201218
+	},
+	{
+		"Name": "redis-2.8.24.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/redis-2.8.24.cntmp",
+		"Hash": "3938abae97f243521abf69ce35f9464e0895a609c63a0f7b674a048158239007",
+		"Size": 2891364
+	},
+	{
+		"Name": "rsync-3.1.2.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/rsync-3.1.2.cntmp",
+		"Hash": "a9f82cea93b8d51dbfd602ffe514fb2c83b97336904b0811107911562f86a70d",
+		"Size": 676894
+	},
+	{
+		"Name": "ruby-2.2.4.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/ruby-2.2.4.cntmp",
+		"Hash": "8235ae3b227b103e9d1e2f4748ce8c5943bfb5b3ec991910c40c4f9e5be1e49e",
+		"Size": 28622846
+	},
+	{
+		"Name": "ruby-2.3.0.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/ruby-2.3.0.cntmp",
+		"Hash": "7c07966d77e787998eda7a4e36a44511ccd6549001f6b54c343525d47d164040",
+		"Size": 30737285
+	},
+	{
+		"Name": "subversion-1.9.3.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/subversion-1.9.3.cntmp",
+		"Hash": "eadc4ea43155d5931b4dc2245e0621e9b1012ff62cb97d68436ab8aa4667a550",
+		"Size": 16011871
+	},
+	{
+		"Name": "td-agent-1.1.17-amd64.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/td-agent-1.1.17-amd64.cntmp",
+		"Hash": "5dd5e8afa5b085844d67ff64adef8a3eae84124e332518de9b219bb9968b21dc",
+		"Size": 50366928
+	},
+	{
+		"Name": "tokumx-2.0.1.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/tokumx-2.0.1.cntmp",
+		"Hash": "f059bd67ca814bdb34e0a900993eafb317f9d61a89599177bd230e58397bfdd6",
+		"Size": 83573021
+	},
+	{
+		"Name": "ubuntu-14.04-apc3.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/ubuntu-14.04-apc3.cntmp",
+		"Hash": "052abdd5683035b63c85361ffc18e34de93bb4a70b543a7f0aec5205059285c6",
+		"Size": 70451876
+	},
+	{
+		"Name": "ubuntu-14.04-build-essential-apc4.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/ubuntu-14.04-build-essential-apc4.cntmp",
+		"Hash": "493abdf0642cb69c42058d55473986325dc1129e03084812e7ac5ae041ae09b7",
+		"Size": 120236597
+	},
+	{
+		"Name": "zsh-5.0.5.cntmp",
+		"URL": "https://apcera-imports.s3.amazonaws.com/zsh-5.0.5.cntmp",
+		"Hash": "c66f3b21b098517a3955c7234497a9e7aacb3be5b28bbc856882454640a9284d",
+		"Size": 2074221
+	}
+]
