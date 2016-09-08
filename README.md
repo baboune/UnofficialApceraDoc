@@ -302,9 +302,45 @@ Which means use basic-auth, and user name is "admin".  Then the "admins" section
 
 Note: The `@apcera.me` distinguishes the "basic auth" usernames from names that come from other auth providers.
 
-# Tips and tricks
+## Deploy
 
-## Clean up after a failed deployment
+To speed up deployment, it is recommended to download a release from the support portal.  This will prevent various round-trips between the orchestrator server and the internet.
+
+In my case, I downloaded [release-2.2.0.tar.gz](https://downloads.apcera.com/continuum/bundles/release-2.2.0.tar.gz).
+
+```
+$ orchestrator-cli deploy  -c bareos-cluster-mine.conf --release-bundle release-2.2.0.tar.gz
+```
+
+## Connect
+
+### Using apc console
+
+Get apc from http://docs.apcera.com/quickstart/installing-apc/.
+
+Initially thought apce would use the name of my cluster plus the domain (ie mine.apcera.test) but it uses only the domain.
+
+```
+$ ./apc target http://apcera.test
+Note: connections over HTTP are insecure and may leak secure information.
+
+Targeted [http://apcera.test]
+$ ./apc login --basic
+
+Connecting to http://apcera.test...
+
+Username: admin
+Password: ********
+```
+
+### Using web console
+
+After making sure that the browser uses the proper DNS, head to http://mine.apcera.test where "mine" is the cluster name, and "apcera.test" the domain.
+
+
+## Tips and tricks
+
+### Clean up after a failed deployment
 
 Do a `orchestrator-cli teardown`, and then on each of the BareOS hosts run `rm /etc/chef/*` to reset their chef configuration completely.
 
@@ -317,7 +353,7 @@ The file to look at is "current":
 $  tail -f /var/log/orchestrator-agent/current
 ```
 
-## orchestrator-cli asks for password
+### orchestrator-cli asks for password
 
 In order for the orchestrator-cli to work properly on commands that require a remote SSH to servers, a valid private key must be loaded within the shell/session context.
 
@@ -334,7 +370,7 @@ $ ssh-add simple.pem
 Identity added: simple.pem (simple.pem)
 ```
 
-## Adding a new user, and its SSH key
+### Adding a new user, and its SSH key
 
 During the "provision_x.sh" phase, the scripts will modify how one accesses ssh.  Basically, the scripts change the sshd_config to only allows some users to SSH in, and they change how the identity check is performed.
 
@@ -351,43 +387,7 @@ chmod 600 /etc/ssh/userauth/lmcnise
 
 Where lmcnise_key.pub is the "lmcnise" public key generated via ssh-keygen on linux.
 
-# Automated setup
-
-1. Setup
-
-a. The Vagrant file will only setup the DNS node to use as a nameserver (192.168.50.100).
-b. Manually spin up 3 VMs, Ubuntu 14 server or minimal. 
-c. Define IP/Hostname such as:
-192.168.50.30 orchestrator.apcera.test
-192.168.50.31 central.apcera.test
-192.168.50.32 singleton.apcera.test
-192.168.50.33 im-01.apcera.test
-And with minimum viable size as per https://docs.apcera.com/installation/deploy/sizing/#minimum-viable-deployment-mvd.
-                      RAM   DISK
-1   orchestrator      2GB   8GB       orchestrator-server, orchestrator-database
-1   central           4GB   20GB      router, api-server, flex-auth-server, nats-server,
-                                      job-manager, health-manager, cluster-monitor, metrics-manager, auditlog-database, component-database, events-server
-1   singleton         4GB   20GB    auth-server, package-manager (local), redis-server, 
-                                    graphite-server, statsd-server, stagehand
-1   instance-manager  8GB   100GB   instance-manager
-
-
-After running the provision_orchestrator.sh script, it will not be possible to login via ssh tp the orchestrator host. SSH is limited to key authentication.  
-
-To allow orchestrator to login vis ssh, one needs to physically log onto the host, then:
-- Generate an SSH key pair (if you do not already have one).
-- Create a file under /etc/ssh/userauth/, 
-  $ touch /etc/ssh/userauth/orchestrator
-- Open file /etc/ssh/userauth/orchestrator for editing
-- Copy and paste your public key at the end of the file (the entire string starting with ssh-rsa)
-- Save the file
-
-
-
-Download the release bundle.  Get rid of the proxy and accessing the internet.
-
-
-Authentication:
+### Authentication:
 - Basic auth should work
 - Enable google-auth: https://docs.apcera.com/installation/identity/auth-google/
 - cluster.conf:
@@ -403,27 +403,29 @@ Authentication:
 ]
 
 
-In the cluster.conf:
 
-# Add any SSH keys that should be placed on machines provisioned within the
-    # cluster. Each key should be a string entry in the array. The SSH keys will
-    # be placed on the host by Chef and allow the system to be accessible by the
-    # "ops" user, or using the "orchestrator-cli ssh" command. Any changes will
-    # be applied during initial step of the Deploy action.
-    "ssh": {
-      "custom_keys":[
-      # Name and contact in for this key here
-       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9Czz98kASpEpaz2KjsLK3QHgRnAP8QtxIVjqo2bNclxefmMDrxqpquznCldALoJfNcMxEHLnsTbOXBdOFknVGzv4UDXzUJX8sAQK1nmeT2TjNjbbvXx0Nn0CsDi7HAbLMYIJ8lrmq/c4s0G/Ws+0OX3NgqKvhYjdJDClqVh6YNIIsgv7MdE4yoKwiHebqbZJy61X2zQiwWX4J8e3b4nmvzONhkDkrAwJ/+ywuHcxOiv+xSaiZsdRuP7ixZ5sDRImYlMtGg1pv+Ujeazs005eBAgOI1kRAWaMJTZ9Uo+AurKt82uijfMULK492cKSJs+9mdASYbfql8OV4W6S6tDCH orchestrator@bare04"
-      ]
-    },
-    
+## Automated setup (TBD)
 
-Replace with own public key to enable ssh.
+The Vagrant file will only setup the DNS node to use as a nameserver (192.168.50.100).
 
-https://downloads.apcera.com/continuum/bundles/release-2.2.0.tar.gz
+Manually spin up 3 VMs, Ubuntu 14 server or minimal. 
 
-Add flag to release bundle:
-orchestrator-cli deploy -c cluster.conf --release-bundle ....tar.gz
+Define IP/Hostname such as:
+192.168.50.30 orchestrator.apcera.test
+192.168.50.31 central.apcera.test
+192.168.50.32 singleton.apcera.test
+192.168.50.33 im-01.apcera.test
+
+And with minimum viable size as per https://docs.apcera.com/installation/deploy/sizing/#minimum-viable-deployment-mvd.
+                      RAM   DISK
+1   orchestrator      2GB   8GB       orchestrator-server, orchestrator-database
+1   central           4GB   20GB      router, api-server, flex-auth-server, nats-server,
+                                      job-manager, health-manager, cluster-monitor, metrics-manager, auditlog-database, component-database, events-server
+1   singleton         4GB   20GB    auth-server, package-manager (local), redis-server, 
+                                    graphite-server, statsd-server, stagehand
+1   instance-manager  8GB   100GB   instance-manager
+
+
 
       
 # Links
