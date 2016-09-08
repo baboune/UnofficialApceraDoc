@@ -337,6 +337,186 @@ Password: ********
 
 After making sure that the browser uses the proper DNS, head to http://mine.apcera.test where "mine" is the cluster name, and "apcera.test" the domain.
 
+## Create your first Apcera job
+
+At this point, I felt confident that it was possible to run a job.  Through the web console, and following the [Creating a job from a Docker image ](http://docs.apcera.com/quickstart/console_tasks/#createfromdocker) tutorial, it is expected to be able to select a few containers from pictures. There were none.
+
+So, still through the console, "Home -> Add an app from Docker", let's try the "Hello World" container from https://hub.docker.com/_/hello-world/, and enter "hello-world".
+```
+Error - No packages satisfy dependency "os.linux"
+```
+Hummm...  A container image contains both the OS and execution parts in the binary.
+
+Then I tried "Launch -> Capsule" as per [Creatomg a capsule from Ubuntu](http://docs.apcera.com/quickstart/console_tasks/#createcapsule).  No Ubuntu icon. In the "Or select a package" drop-down menu, there is "package::/apcera::console-lucid".  OK, select that, accept default, enable egress -> "Submit" -> "Capsule created". 
+
+Success! Let's ssh.
+```
+$ apc capsule connect myubuntu
+
+```
+And it eventually times out.  Go back to web console, check logs:
+```
+"[system-error] "job::/sandbox/admin::console-lucid-1" now considered flapping, having failed 3 times within 5m0s"
+```
+Apparently something is wrong.
+
+On the IM, let's check logs:
+```
+$ tail -f  /var/log//var/log/continuum-instance-manager/current
+[DEBUG 2016-09-08 10:01:39.302617226 +0200 CEST pid=5549 requestid='' source='env.go:89' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Starting binding configuration.
+[INFO  2016-09-08 10:01:39.302759473 +0200 CEST pid=5549 requestid='' source='templates.go:149' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Evaluating template with source: "/var/lib/continuum/package_cache/sha256-2ed5d5593b71b6d014aa6302e6895b7073de22fbc26f93dbc32083e20ebe0e65/app/public/index.html", info {/var/lib/continuum/instances/961de1a6/root/app/public/index.html {{ }}}
+[INFO  2016-09-08 10:01:39.303070639 +0200 CEST pid=5549 requestid='' source='templates.go:149' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Evaluating template with source: "/var/lib/continuum/package_cache/sha256-2ed5d5593b71b6d014aa6302e6895b7073de22fbc26f93dbc32083e20ebe0e65/app/public/config.js", info {/var/lib/continuum/instances/961de1a6/root/app/public/config.js {{ }}}
+[DEBUG 2016-09-08 10:01:39.303594326 +0200 CEST pid=5549 requestid='' source='states.go:1473' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Started setting hostname...
+[DEBUG 2016-09-08 10:01:39.303857875 +0200 CEST pid=5549 requestid='' source='states.go:1485' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Completed setting hostname to "ip-169-254-0-1".
+[DEBUG 2016-09-08 10:01:39.303870507 +0200 CEST pid=5549 requestid='' source='states.go:1420' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Starting sshd configuration for heavy.
+[DEBUG 2016-09-08 10:01:39.303876358 +0200 CEST pid=5549 requestid='' source='env.go:32' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Starting to generate the common environment variables
+[DEBUG 2016-09-08 10:01:39.303917652 +0200 CEST pid=5549 requestid='' source='env.go:47' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Setting Env variables for "init"
+[DEBUG 2016-09-08 10:01:39.307633501 +0200 CEST pid=5549 requestid='' source='routes.go:266' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Verifying connectivity to 192.168.50.33:3888
+[TRACE 2016-09-08 10:01:39.408423989 +0200 CEST pid=5549 requestid='' source='routes.go:282' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Successfully connected to 192.168.50.33:3888
+[DEBUG 2016-09-08 10:01:39.408531872 +0200 CEST pid=5549 requestid='' source='states.go:1455' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Starting chrooting the initd process.
+[DEBUG 2016-09-08 10:01:39.410973947 +0200 CEST pid=5549 requestid='' source='states.go:1461' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Completed chrooting to "/var/lib/continuum/instances/961de1a6/root".
+[DEBUG 2016-09-08 10:01:39.410995955 +0200 CEST pid=5549 requestid='' source='env.go:32' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Starting to generate the common environment variables
+[DEBUG 2016-09-08 10:01:39.411052830 +0200 CEST pid=5549 requestid='' source='env.go:47' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Setting Env variables for "init"
+[DEBUG 2016-09-08 10:01:39.411066309 +0200 CEST pid=5549 requestid='' source='heavy.go:41' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Starting initd within the container.
+[ERROR 2016-09-08 10:01:39.413562062 +0200 CEST pid=5549 requestid='' source='statemachine.go:1002' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Error setting up the container: 'Empty response.', unwinding the container to clean up the problem.
+[INFO  2016-09-08 10:01:39.413648542 +0200 CEST pid=5549 requestid='' source='statemachine.go:967' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Switching state: STARTING -> STOPPING_WAIT
+[TRACE 2016-09-08 10:01:39.413664372 +0200 CEST pid=5549 requestid='' source='statemachine.go:978' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Sending out state change notfication for 961de1a6-c8dc-4c12-9c67-53e08199af2c.
+[INFO  2016-09-08 10:01:39.414220742 +0200 CEST pid=5549 requestid='' source='statemachine.go:967' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Switching state: STOPPING_WAIT -> STOPPING
+
+```
+The job is failing but without much indication about the problem.
+
+Then following [Deploying a Static Web Site](http://docs.apcera.com/tutorials/staticsite/):
+```
+"[staging] Validating an index.htm or index.html file exists
+[staging] Failed to update package dependencies: Failed to resolve packages: no packages satisfy dependency "package.nginx"
+[staging] 
+[staging] "package::/sandbox/admin::mywebsite" has failed to stage"
+```
+
+In the support section "Known Issues & notifications", there is an article about "adding packages to your Apcera Platform Enterprise Edition Environment".  
+
+At this point, it seems that a BareOS deployment of Enterprise Edition comes with none of the necessary packages for running any applications.  Remember that Apcera only "supports" running the Docker container image, but uses its own container technology.  This explains why none of the above worked.
+
+In short, the link in the support points to a [JSON file](https://apcera-imports.s3.amazonaws.com/apcera_packages_ee_20160706100936.json) and a github project [packages-script](https://github.com/apcera/package-scripts).
+
+#### Github [packages-script](https://github.com/apcera/package-scripts).
+
+This Github project has on the September 8, 2016 5 stars and 18 contributors. 0 issues.
+
+At this point, it does not seem possible to build the [os](https://github.com/apcera/package-scripts/tree/master/os) packages. See [135](https://github.com/apcera/package-scripts/issues/135).  
+
+And all over packages will have dependencies on those.
+
+#### The JSON file
+
+Interestingly the JSON file [default-packages/apcera_packages_ee_20160706100936.json] contains a series of names and URLs.
+
+```
+  ...
+
+  {
+    "Name": "ubuntu-14.04-apc3.cntmp",
+    "URL": "https://apcera-imports.s3.amazonaws.com/ubuntu-14.04-apc3.cntmp",
+    "Hash": "052abdd5683035b63c85361ffc18e34de93bb4a70b543a7f0aec5205059285c6",
+    "Size": 70451876
+  },
+  {
+    "Name": "ubuntu-14.04-build-essential-apc4.cntmp",
+    "URL": "https://apcera-imports.s3.amazonaws.com/ubuntu-14.04-build-essential-apc4.cntmp",
+    "Hash": "493abdf0642cb69c42058d55473986325dc1129e03084812e7ac5ae041ae09b7",
+    "Size": 120236597
+  },
+
+  ...
+
+```
+No "os.linux" though which seemed to be the base requirement for running a Docker container image.
+
+However, when one adds: 
+```
+$ wget https://apcera-imports.s3.amazonaws.com/ubuntu-14.04-apc3.cntmp
+$ shasum -a 256 ubuntu-14.04-apc3.cntmp
+052abdd5683035b63c85361ffc18e34de93bb4a70b543a7f0aec5205059285c6  ubuntu-14.04-apc3.cntmp
+$ apc import ubuntu-14.04-apc3.cntmp
+Scanning file...
+Processing package "ubuntu-14.04-apc3"...
+  Uploading... done!
+Success!
+```
+This works! 
+
+Let's also add nginx:
+```
+$ wget https://apcera-imports.s3.amazonaws.com/nginx-1.11.1.cntmp
+$ apc import ubuntu-14.04-apc3.cntmp
+$ apc import nginx-1.11.1.cntmp
+```
+
+### Apcera Hello World
+After adding both "ubuntu-14.04-apc3.cntmp" and "nginx-1.11.1.cntmp", then it is possible to do an Apcera hello world.
+
+Following indications in [tutorials/mywebsite] or [Deploying a Static Web Site](http://docs.apcera.com/tutorials/staticsite/):
+```
+$ apc app create mywebsite --start
+Deploy path [/local/git/github/UnofficialApceraDoc/tutorials/mywebsite]: 
+Instances [1]: 
+Memory [256MB]: 
+╭───────────────────────────────────────────────────────────────────────────────╮
+│                             Application Settings                              │
+├───────────────────┬───────────────────────────────────────────────────────────┤
+│              FQN: │ job::/sandbox/admin::mywebsite                            │
+│        Directory: │ /local/git/github/UnofficialApceraDoc/tutorials/mywebsite │
+│        Instances: │ 1                                                         │
+│          Restart: │ always                                                    │
+│ Staging Pipeline: │ (will be auto-detected)                                   │
+│              CPU: │ 0ms/s (uncapped)                                          │
+│           Memory: │ 256MB                                                     │
+│             Disk: │ 1024MB                                                    │
+│           NetMin: │ 5Mbps                                                     │
+│           Netmax: │ 0Mbps (uncapped)                                          │
+│         Route(s): │ auto                                                      │
+│  Startup Timeout: │ 30 (seconds)                                              │
+│     Stop Timeout: │ 5 (seconds)                                               │
+╰───────────────────┴───────────────────────────────────────────────────────────╯
+
+Is this correct? [Y/n]: 
+Packaging... done
+Creating package "mywebsite"... done
+Uploading package contents... done!
+[staging] Subscribing to the staging process...
+[staging] Beginning staging with 'stagpipe::/apcera::static-site' pipeline, 1 stager(s) defined.
+[staging] Launching instance of stager 'static-site'...
+[staging] Downloading package for processing...
+[staging] Validating an index.htm or index.html file exists
+[staging] Staging is complete.
+Creating app "mywebsite"... done
+Start Command: ./start_nginx
+Waiting for the application to start...
+App should be accessible at "http://mywebsite-h3f435.apcera.test"
+Success!
+```
+
+And opening the web browser to http://mywebsite-h3f435.apcera.test, prints out "Hello Apcera" as expected.
+
+### Some explanations
+
+Looking at [Working with Packages](http://docs.apcera.com/packages/using/), it seems every binary has both "depends" and "provides" within its metadata. 
+
+If the "depends" are not met by a matching provides somewhere within the Apcera list of avaialable packages then the deployment of the job fails with an error.  It turns out that the "ubuntu-14.04-apc3.cntmp" package that is installed previously provides the following (web console -> Packages -> ubuntu-14.04-apc3.cntmp):
+* "os.linux"
+* "os.ubuntu"
+* "os.linux-14.04"
+* "os.linux-14.04-apc3"
+
+Which meets the requirements of nginx (web console -> Packages -> nginx-1.11.1.cntmp):
+* "os.ubuntu"
+
+At this point it is important to remember that Apcera (previously known as Continuum) is built as a replacement for Cloud Foundry.  This approach to building containers is quite the opposite of the Docker approach based on a Dockerfile i.e. explicitly specifying all the dependencies and packaging all dependencies at once in a single image.  Apcera will build the container based on its own "packages" i.e. whatever meets the dependencies.
+
+In a way, the above steps with installing the packages from the JSON file is a lucky strike. But it works!
+
+Question: Does this mean that when I tried to deploy the dockerhub "hello-world" container, the kernel was not there? And somehow the ubuntu packages provides it? I dont understand the dependencies.
 
 ## Tips and tricks
 
