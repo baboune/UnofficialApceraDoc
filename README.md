@@ -61,7 +61,7 @@ Currently you must use eth0 as the name for the network interface on the Ubuntu 
 ### External DNS
 While the documentation refers to using a DNS, the DNS is not used during the setup.
 
-The orchestrator-cli (using chef) sets the hostname to clustername-uuid, where the uuid is the one seen in the orchestrator ssh menu.  This makes it possible to correlate logs back to their hosts after extracting them to another system for analysis. The same chef recipe adds the local hostname to /etc/hosts on each host to allow local name resolution.  There is no interaction with dns, none should be required.  Nothing outside the host is aware of the hostname. All cluster services are configured by IP.
+The `orchestrator-cli` (using chef) sets the hostname to clustername-uuid, where the uuid is the one seen in the orchestrator ssh menu.  This makes it possible to correlate logs back to their hosts after extracting them to another system for analysis. The same chef recipe adds the local hostname to /etc/hosts on each host to allow local name resolution.  There is no interaction with dns, none should be required.  Nothing outside the host is aware of the hostname. All cluster services are configured by IP.
 
 After the initial setup of Apcera, it is only necessary for two DNS records to be created: {DOMAIN} and *.{DOMAIN}. the cluster FQDN/wildcard entries, i.e. *.your.cluster.name, pointing to the routers or whatever load balancer you have in front of them.
 
@@ -87,21 +87,21 @@ AFAIK, air gapped installations are not supported atm.
 ## Steps after installing ubuntu
 
 ### Run scripts
-Once Ubuntu is setup on each server. There are two scripts to run as root (or sudo): 
-* provision_base.sh: Apply to all servers except "orchestrator" type.
-* provision_orchestrator.sh: Apply to "orchestrator" type only.
+Once Ubuntu is setup on each server. There are two scripts to run as `root` (or sudo): 
+* `provision_base.sh`: Apply to all servers except `orchestrator` type.
+* `provision_orchestrator.sh`: Apply to `orchestrator` type only.
 
-These scripts update the kernel, create required users, add repositories, set up OS level security, run Chef recipes, and install necessary agents for each cluster server. 
+These scripts update the kernel, create required users, add repositories, set up OS level security, run `Chef` recipes, and install necessary agents for each cluster server. 
 
 They also change the sshd_config to only allows the following users to SSH in:
-* On orchestrator node: ops, orchestrator, and root users. 
-* On othe nodes: ops, and root users. 
+* On orchestrator node: `ops`, `orchestrator`, and `root` users. 
+* On othe nodes: ops, and `root` users. 
 
 The provisioning scripts are available to Apcera Platform Enterprise Edition licensed customers via the Apcera Customer Support Portal. Sign into the [Support Portal](http://support.apcera.com/) with your account credentials to download the scripts. To run the scripts, see provisioning cluster hosts.
 
-The script "provision_base.sh" must be ran on all servers except the orchestrator.
+The script `provision_base.sh` must be ran on all servers except the orchestrator.
 
-The script "provision_orchestrator.sh" must be ran on the orchestrator server only.
+The script `provision_orchestrator` must be ran on the orchestrator server only.
 
 Note: 
 * Running those scripts require all servers to have internet access.
@@ -110,15 +110,15 @@ At this point, the servers are almost "ready" to deploy apcera.
 
 ### Things to consider
 
-#### Restricted access to "ops", "root"
+#### Restricted access to `ops`, `root`
 
-In http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts, it says: "The scripts change the sshd_config to only allows the ops, orchestrator, and root users to SSH in. You can change that to allow other users if you desire." 
+In http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts, it says: "The scripts change the sshd_config to only allows the ops, orchestrator, and `root` users to SSH in. You can change that to allow other users if you desire." 
 
 The statement from the doc is partially false:
-* The provision_base.sh script will limit access to "ops" and "root".
-* The provision_orchestrator.sh script will limit access to "ops", "orchestrator" and "root".
+* The `provision_base.sh` script will limit access to `ops` and `root`.
+* The `provision_orchestrator` script will limit access to `ops`, `orchestrator` and `root`.
 
-If other users should be allowed access, then either modify the provision_xx.sh script or the sshd_config file:
+If other users should be allowed access, then either modify the `provision_xx.sh` script or the sshd_config file:
 
 ```
   ...
@@ -138,9 +138,9 @@ Since, as an apcera installer, we do not have a matching private key, it can not
 
 Searching through the scripts with "ssh-rsa", one finds two locations per script for public SSH keys.
 
-#### provision_base.sh
+#### `provision_base.sh`
 
-1. Around line 165, setup "root" user:
+1. Around line 165, setup `root` user:
 ```
 # Write the SSH keys for the root user. This includes the master Apcera root key,
 # as well as the user certificate authority key.
@@ -152,7 +152,7 @@ EOP
 )> /etc/ssh/userauth/root
 ```
 
-2. Around line 207, setup "ops" user:
+2. Around line 207, setup `ops` user:
 ```
 # Write the SSH keys for the ops user. This includes the master Apcera ops key,
 # as well as the user certificate authority key.
@@ -164,9 +164,9 @@ EOP
 ) > /etc/ssh/userauth/ops
 ```
 
-#### provision_orchestrator.sh
+#### `provision_orchestrator`
 
-1. Around line 165, setup "root" user:
+1. Around line 165, setup `root` user:
 ```
 # Write the SSH keys for the root user. This includes the master Apcera root key,
 # as well as the user certificate authority key.
@@ -178,7 +178,7 @@ EOP
 ) > /etc/ssh/userauth/root
 ```
 
-2. Around line 207, setup "ops" user:
+2. Around line 207, setup `ops` user:
 ```
 # Write the SSH keys for the ops user. This includes the master Apcera ops key,
 # as well as the user certificate authority key.
@@ -194,13 +194,13 @@ EOP
 
 Let's assume that you have generated an SSH key. That key has a private and a public part: mykey.pub and mykey.pem.
 
-Only the cluster.conf entry is mandatory to ensure remote SSH access.  Once a "orchestrator deploy" occurs Chef will be  managing the key list.  As such, adding keys in the "provision_xx.sh" scripts is just to ensure that you retain access to the host prior to the deploy, in case something goes wrong.
+Only the cluster.conf entry is mandatory to ensure remote SSH access.  Once a "orchestrator deploy" occurs Chef will be  managing the key list.  As such, adding keys in the `provision_xx.sh` scripts is just to ensure that you retain access to the host prior to the deploy, in case something goes wrong.
 
-It is unclear at this time which user is used by "orchestrator-cli". So, the easiest approach is most likely to add the public key part (mykey.pub) to both sections i.e. for both the "root" and "ops" sections in the "provision_xx.sh" scripts.  
+It is unclear at this time which user is used by `orchestrator-cli`. So, the easiest approach is most likely to add the public key part (mykey.pub) to both sections i.e. for both the `root` and `ops` sections in the `provision_xx.sh` scripts.  
 
-Correction: Jeremy Strout said it is the "ops" user that is required by "orchestrator-cli".
+Correction: Jeremy Strout said it is the `ops` user that is required by `orchestrator-cli`.
 
-Optional: Adding the key to a provision_xx.sh script, e.g. add mykey.pub for "ops":
+Optional: Adding the key to a `provision_xx.sh` script, e.g. add mykey.pub for `ops`:
 ```
 (
 cat <<'EOP'
@@ -212,7 +212,7 @@ EOP
 ```
 (Copy and paste content of mykey.pub.)
 
-This will guarantee that the key is distributed to all servers in the cluster for both "root" and "ops" during bootstraping.
+This will guarantee that the key is distributed to all servers in the cluster for both `root` and `ops` during bootstraping.
 
 Mandatory: Add SSH key to "cluster.conf" file.
 ```
@@ -224,30 +224,30 @@ chef: {
     "ssh": {
       "custom_keys":[
        "ssh-rsa AAAAB3Nz...W6S6tDCH orchestrator@bare04",
-       # The below is the mykey.pub to allow mykey.pem to be loaded in ssh-agent and orchestrator-cli to work
+       # The below is the mykey.pub to allow mykey.pem to be loaded in ssh-agent and `orchestrator-cli` to work
        "ssh-rsa AAAAB...22O/CN1Lxz"
       ]
     },
 ```
 This guarantees the SSH key is managed by Chef.
 
-Now, there is another interesting aspect of the "orchestrator-cli" in that it requires the matching private key to be within the user session context (ssh-agent). In other words, if one does not add his own key to the cluster.conf/provision_xx.sh files, then one can not use commands like:
+Now, there is another interesting aspect of the `orchestrator-cli` in that it requires the matching private key to be within the user session context (ssh-agent). In other words, if one does not add his own key to the `cluster.conf`/`provision_xx.sh` files, then one can not use commands like:
 ```
 $ orchestrator-cli collect
 $ orchestrator-cli ssh
 ```
 They will fail by requesting a password.
 
-The reason is that above "orchestrator-cli" commands wont work without a primary key in the ssh-agent, and since the apcera-special-ops and apcera-user-ca are not available to us, then one MUST include a public key in the cluster.conf/provision_x.sh with a known private key.
+The reason is that above `orchestrator-cli` commands wont work without a primary key in the ssh-agent, and since the apcera-special-ops and apcera-user-ca are not available to us, then one MUST include a public key in the `cluster.conf`/`provision_x.sh` with a known private key.
 
 
 ### Craft the cluster.conf
 
-The cluster.conf file uses an Apcera proprietary format called "dconf".  The format is defined here: [http://docs.apcera.com/reference/dconf/]. 
+The cluster.conf file uses an Apcera proprietary format called `dconf`.  The format is defined [here - dconf](http://docs.apcera.com/reference/dconf/). 
 
 In the section above, I describe how to add the public key (mykey.pub) to the cluster.conf file. This is necessary to allow remote SSH within the cluster nodes from the orchestrator.
 
-There is a lot of information about cluster.conf [here]](http://docs.apcera.com/installation/config/cluster-conf/)
+There is a lot of information about cluster.conf [here](http://docs.apcera.com/installation/config/cluster-conf/)
 
 Working example of cluster.conf: [config/bareos-cluster-mine.conf](config/bareos-cluster-mine.conf).
 
@@ -333,7 +333,7 @@ Username: admin
 Password: ********
 ```
 
-### Using web console
+### Using the web console
 
 After making sure that the browser uses the proper DNS, head to http://mine.apcera.test where "mine" is the cluster name, and "apcera.test" the domain.
 
@@ -351,7 +351,7 @@ Then I tried "Launch -> Capsule" as per [Creatomg a capsule from Ubuntu](http://
 
 Success! Let's ssh.
 ```
-$ apc capsule connect myubuntu
+$ apc capsule connect console-lucid-1
 
 ```
 And it eventually times out.  Go back to web console, check logs:
@@ -384,7 +384,7 @@ $ tail -f  /var/log//var/log/continuum-instance-manager/current
 [INFO  2016-09-08 10:01:39.414220742 +0200 CEST pid=5549 requestid='' source='statemachine.go:967' job='daf304a7-4180-4e63-9ec0-fa9edb6ff153' instance='961de1a6-c8dc-4c12-9c67-53e08199af2c'] Switching state: STOPPING_WAIT -> STOPPING
 
 ```
-The job is failing but without much indication about the problem.
+The job is failing but without much indications about the actual problem.
 
 Then following [Deploying a Static Web Site](http://docs.apcera.com/tutorials/staticsite/):
 ```
@@ -394,7 +394,7 @@ Then following [Deploying a Static Web Site](http://docs.apcera.com/tutorials/st
 [staging] "package::/sandbox/admin::mywebsite" has failed to stage"
 ```
 
-In the support section "Known Issues & notifications", there is an article about "adding packages to your Apcera Platform Enterprise Edition Environment".  
+In the support section "Known Issues & notifications", there is an article about [adding packages to your Apcera Platform Enterprise Edition Environment](https://support.apcera.com/hc/en-us/articles/212072106-Adding-Packages-to-your-Apcera-Platform-Enterprise-Edition-Environment).  (Note that the link being on the support site, it most likely requires a license or EE account.)
 
 At this point, it seems that a BareOS deployment of Enterprise Edition comes with none of the necessary packages for running any applications.  Remember that Apcera only "supports" running the Docker container image, but uses its own container technology.  This explains why none of the above worked.
 
@@ -410,7 +410,7 @@ And all over packages will have dependencies on those.
 
 #### The JSON file
 
-Interestingly the JSON file [default-packages/apcera_packages_ee_20160706100936.json] contains a series of names and URLs.
+Interestingly the JSON file [apcera_packages_ee_20160706100936.json](./default-packages/apcera_packages_ee_20160706100936.json) contains a series of names and URLs.
 
 ```
   ...
@@ -449,14 +449,13 @@ This works!
 Let's also add nginx:
 ```
 $ wget https://apcera-imports.s3.amazonaws.com/nginx-1.11.1.cntmp
-$ apc import ubuntu-14.04-apc3.cntmp
 $ apc import nginx-1.11.1.cntmp
 ```
 
 ### Apcera Hello World
-After adding both "ubuntu-14.04-apc3.cntmp" and "nginx-1.11.1.cntmp", then it is possible to do an Apcera hello world.
+After adding both "ubuntu-14.04-apc3.cntmp" and "nginx-1.11.1.cntmp", then it is possible to run an Apcera hello world job.
 
-Following indications in [tutorials/mywebsite] or [Deploying a Static Web Site](http://docs.apcera.com/tutorials/staticsite/):
+Following indications in [./tutorials/mywebsite/README.md](./tutorials/mywebsite/README.md) or [Deploying a Static Web Site](http://docs.apcera.com/tutorials/staticsite/):
 ```
 $ apc app create mywebsite --start
 Deploy path [/local/git/github/UnofficialApceraDoc/tutorials/mywebsite]: 
@@ -501,9 +500,11 @@ And opening the web browser to http://mywebsite-h3f435.apcera.test, prints out "
 
 ### Some explanations
 
-Looking at [Working with Packages](http://docs.apcera.com/packages/using/), it seems every binary has both "depends" and "provides" within its metadata. 
+Looking at [Working with Packages](http://docs.apcera.com/packages/using/), it seems every binary has both *depends* and *provides* within its metadata. 
 
-If the "depends" are not met by a matching provides somewhere within the Apcera list of avaialable packages then the deployment of the job fails with an error.  It turns out that the "ubuntu-14.04-apc3.cntmp" package that is installed previously provides the following (web console -> Packages -> ubuntu-14.04-apc3.cntmp):
+If the *depends* are not met by a matching provides somewhere within the Apcera list of available packages then the deployment of the job fails with an error.  
+
+It turns out that the "ubuntu-14.04-apc3.cntmp" package that is installed previously provides the following (web console -> Packages -> ubuntu-14.04-apc3.cntmp):
 * "os.linux"
 * "os.ubuntu"
 * "os.linux-14.04"
@@ -512,11 +513,12 @@ If the "depends" are not met by a matching provides somewhere within the Apcera 
 Which meets the requirements of nginx (web console -> Packages -> nginx-1.11.1.cntmp):
 * "os.ubuntu"
 
-At this point it is important to remember that Apcera (previously known as Continuum) is built as a replacement for Cloud Foundry.  This approach to building containers is quite the opposite of the Docker approach based on a Dockerfile i.e. explicitly specifying all the dependencies and packaging all dependencies at once in a single image.  Apcera will build the container based on its own "packages" i.e. whatever meets the dependencies.
+At this point it is important to remember that Apcera (previously known as Continuum) is built as a replacement for Cloud Foundry.  This approach to building containers is quite the opposite of the Docker approach based on a Dockerfile i.e. explicitly specifying all the dependencies and packaging all dependencies at once in a single image.  Apcera will build the container based on its own *packages* i.e. whatever meets the dependencies.  (Whatever may not be the right term as it depends on policies.)
 
 In a way, the above steps with installing the packages from the JSON file is a lucky strike. But it works!
 
-Question: Does this mean that when I tried to deploy the dockerhub "hello-world" container, the kernel was not there? And somehow the ubuntu packages provides it? I dont understand the dependencies.
+Question: Why did it require a package for running a Docker image?
+Apcera uses a short helper job to download the image. That short lived job runs on an IM and depends on a base linux package.  
 
 ## Tips and tricks
 
@@ -535,7 +537,7 @@ $  tail -f /var/log/orchestrator-agent/current
 
 ### orchestrator-cli asks for password
 
-In order for the orchestrator-cli to work properly on commands that require a remote SSH to servers, a valid private key must be loaded within the shell/session context.
+In order for the `orchestrator-cli` to work properly on commands that require a remote SSH to servers, a valid private key must be loaded within the shell/session context.
 
 This is done by the following set of actions:
 ```
@@ -552,7 +554,7 @@ Identity added: simple.pem (simple.pem)
 
 ### Adding a new user, and its SSH key
 
-During the "provision_x.sh" phase, the scripts will modify how one accesses ssh.  Basically, the scripts change the sshd_config to only allows some users to SSH in, and they change how the identity check is performed.
+During the `provision_x.sh` phase, the scripts will modify how one accesses ssh.  Basically, the scripts change the sshd_config to only allows some users to SSH in, and they change how the identity check is performed.
 
 One such modification in sshd_config is this:
 ```
