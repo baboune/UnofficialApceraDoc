@@ -67,6 +67,14 @@ The `orchestrator-cli` (using chef) sets the hostname to clustername-uuid, where
 
 After the initial setup of Apcera, it is only necessary for two DNS records to be created: {DOMAIN} and *.{DOMAIN}. the cluster FQDN/wildcard entries, i.e. *.your.cluster.name, pointing to the routers or whatever load balancer you have in front of them.
 
+Note: Un my deployment, the *.{DOMAIN} is set to apcera.test and points to the host in the cluster running the "router" component in the cluster.conf ie the central (192.168.50.31). Using dnsmasq, /etc/dnsmasq.conf:
+
+```
+address=/#.apcera.test/192.168.50.31
+address=/.apcera.test/192.168.50.31
+
+```
+
 ### Problems with http://docs.apcera.com/installation/bareos/bareos-install-scripts/
 
 There are two sections that are confusing and error prone in the online documentation.  I suggest not to spend too much time on those:
@@ -97,7 +105,7 @@ These scripts update the kernel, create required users, add repositories, set up
 
 They also change the sshd_config to only allows the following users to SSH in:
 * On orchestrator node: `ops`, `orchestrator`, and `root` users. 
-* On othe nodes: ops, and `root` users. 
+* On other nodes: ops, and `root` users. 
 
 The provisioning scripts are available to Apcera Platform Enterprise Edition licensed customers via the Apcera Customer Support Portal. Sign into the [Support Portal](http://support.apcera.com/) with your account credentials to download the scripts. To run the scripts, see provisioning cluster hosts.
 
@@ -114,7 +122,7 @@ At this point, the servers are almost "ready" to deploy apcera.
 
 #### Restricted access to `ops`, `root`
 
-In http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts, it says: "The scripts change the sshd_config to only allows the ops, orchestrator, and `root` users to SSH in. You can change that to allow other users if you desire." 
+In http://docs.apcera.com/installation/bareos/bareos-install-reqs/#provisioning-scripts, it says: "The scripts change the sshd_config to only allows the `ops`, `orchestrator`, and `root` users to SSH in. You can change that to allow other users if you desire." 
 
 The statement from the doc is partially false:
 * The `provision_base.sh` script will limit access to `ops` and `root`.
@@ -132,11 +140,12 @@ And restart ssh for changes to sshd_config to take effect:
 ```
 $ service restart ssh
 ```
+
 #### Apcera key management
 
 The scripts contain two ssh public keys (apcera-user-ca, apcera-special-ops) that get deployed on all machines.  Those keys are for Apcera operations people only.  The private keys are owned by Apcera and not distributed.
 
-Since, as an apcera installer, we do not have a matching private key, it can not be used to SSH into the servers.
+Since, as an installer, we do not have a matching private key, it can not be used to SSH into the servers.
 
 Searching through the scripts with "ssh-rsa", one finds two locations per script for public SSH keys.
 
@@ -196,7 +205,7 @@ EOP
 
 Let's assume that you have generated an SSH key. That key has a private and a public part: mykey.pub and mykey.pem.
 
-Only the cluster.conf entry is mandatory to ensure remote SSH access.  Once a "orchestrator deploy" occurs Chef will be  managing the key list.  As such, adding keys in the `provision_xx.sh` scripts is just to ensure that you retain access to the host prior to the deploy, in case something goes wrong.
+Only the cluster.conf entry is mandatory to ensure remote SSH access.  Once a "orchestrator deploy" occurs `Chef` will be  managing the key list.  As such, adding keys in the `provision_xx.sh` scripts is just to ensure that you retain access to the host prior to the deploy, in case something goes wrong.
 
 It is unclear at this time which user is used by `orchestrator-cli`. So, the easiest approach is most likely to add the public key part (mykey.pub) to both sections i.e. for both the `root` and `ops` sections in the `provision_xx.sh` scripts.  
 
@@ -238,9 +247,9 @@ Now, there is another interesting aspect of the `orchestrator-cli` in that it re
 $ orchestrator-cli collect
 $ orchestrator-cli ssh
 ```
-They will fail by requesting a password.
+Those commands will fail by requesting a password.
 
-The reason is that above `orchestrator-cli` commands wont work without a primary key in the ssh-agent, and since the apcera-special-ops and apcera-user-ca are not available to us, then one MUST include a public key in the `cluster.conf`/`provision_x.sh` with a known private key.
+The reason is that above `orchestrator-cli` commands wont work without a primary key in the ssh-agent, and since the apcera-special-ops and apcera-user-ca are not available to us, then one MUST include a public key in the `cluster.conf`/`provision_x.sh` with a known private key AND that key must be loaded in the ssh-agent.
 
 
 ### Craft the cluster.conf
