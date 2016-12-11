@@ -1,3 +1,5 @@
+Disclaimer: December 10th 2016, I am no longer using Apcera. 
+
 # UnofficialApceraDoc
 
 Instructions for setting up a BareOS Enterprise Edition of Apcera.
